@@ -1,26 +1,23 @@
-import { addLog } from '../../lib/logStore.js';
+export default function handler(req, res) {
+  const VERIFY_TOKEN = "ankush_wairagade"; // <- set this same token in Facebook dashboard
 
-const VERIFY_TOKEN = 'ankush_wairagade'; // You can change this
+  if (req.method === "GET") {
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
 
-export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    const mode = req.query['hub.mode'];
-    const token = req.query['hub.verify_token'];
-    const challenge = req.query['hub.challenge'];
-
-    if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-      console.log('✅ Webhook verified!');
-      return res.status(200).send(challenge);
+    if (mode === "subscribe" && token === VERIFY_TOKEN) {
+      console.log("Webhook verified successfully.");
+      res.status(200).send(challenge);
     } else {
-      return res.status(403).send('Verification failed');
+      console.error("Webhook verification failed.");
+      res.status(403).send("Forbidden");
     }
+  } else if (req.method === "POST") {
+    // Facebook sends actual webhooks here
+    console.log("Webhook event:", req.body);
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(405); // Method not allowed
   }
-
-  if (req.method === 'POST') {
-    console.log('📥 Webhook received:', req.body);
-    addLog(req.body);
-    return res.status(200).json({ status: 'received' });
-  }
-
-  return res.status(405).send('Method Not Allowed');
 }
