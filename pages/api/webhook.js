@@ -1,6 +1,6 @@
 import { addLog } from '../../lib/logStore.js';
 
-const VERIFY_TOKEN = 'my_verify_token'; // You can change this
+const VERIFY_TOKEN = 'ankush_wairagade'; // You can change this
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
